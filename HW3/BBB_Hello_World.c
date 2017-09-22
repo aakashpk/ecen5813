@@ -2,5 +2,5 @@
 
 void main()
 {
-printf("Aakash Hello World");
+printf("\nAakash Hello World\n");
 }
