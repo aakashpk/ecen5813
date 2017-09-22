@@ -37,7 +37,7 @@ char reverse(char * str,int length)
       *(str+i)=*(str+lim-i);
       *(str+lim-i)=temp;
     }
-    return 0;
+    return '0';
   }
 }
 
@@ -54,9 +54,9 @@ void main()
   printf("Case1\n");
   for(int i=0;i<size1;i++) printf("%c",*(y+i));
 
-  int out1=reverse(&y,17);
+  char out1=reverse(&y,17);
 
-  if(out1==0)
+  if(out1=='0')
   {
   printf("\nReversed:\n");
   for(int i=0;i<size1;i++) printf("%c",*(y+i));
@@ -66,9 +66,9 @@ void main()
   printf("\nCase2\n");
   for(int i=0;i<size2;i++) printf("%c",*(z+i));
 
-  int out2=reverse(&z,18);
+  char out2=reverse(&z,18);
 
-  if(out2==0)
+  if(out2=='0')
   {
   printf("\nReversed:\n");
   for(int i=0;i<size2;i++) printf("%c",*(z+i));
@@ -78,13 +78,14 @@ void main()
   printf("\n\nCase3\n");
   for(int i=0;i<size3;i++) printf("%c",*(u+i));
 
-  int out3=reverse(&u,30);
+  char out3=reverse(&u,30);
 
-  if(out3==0)
+  if(out3=='0')
   {
   printf("\nReversed:\n");
   for(int i=0;i<size3;i++) printf("%c",*(u+i));
   }
-
+ 
+  printf("\n");
 
 }
