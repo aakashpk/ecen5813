@@ -30,26 +30,40 @@ uint8_t * my_memcpy(uint8_t * src, uint8_t *dst, size_t length);
 */
 int8_t *  my_memset(uint8_t  *  src,  size_t  length,  uint8_t  value);
 /*
-
+@brief function to set all locations of memory block to a given value
+@param *src byte pointer to source location
+@param length of memory block to be set
+@param value to be set
+@return byte pointer to source
 */
 
 uint8_t *  my_memzero(uint8_t  *  src,  size_t  length);
 /*
-
+@brief function to set all locations of memory block to zero 
+@param *src byte pointer to source location
+@param length of memory block to be set
+@return byte pointer to source
 */
 
 uint8_t *  my_reverse(uint8_t  *  src,  size_t  length);
 /*
-
+@brief function to set all locations of memory block to zero 
+@param *src byte pointer to source location
+@param length of memory block to be set
+@return byte pointer to source
 */
 
 int32_t *  reserve_words(size_t  length);
 /*
-
+@brief reserves a memory block of given length
+@param length , no of words to reserve 
+@return byte pointer to allocation if sucessful, NULL if failure
 */
 
 void free_words(int32_t  *  src);
 /*
-
+@brief frees a memory block allocation when pointer to the memory is provided
+@param *src pointer to memory block
+@return none
 */
 #endif //MEMORY_h
