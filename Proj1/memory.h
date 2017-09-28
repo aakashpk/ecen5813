@@ -10,6 +10,8 @@
 
 #include<stdint.h>
 
+uint8_t mem_buffer[];
+
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length);
 /*
 @brief function to move contents of memory given the start of source address, 
