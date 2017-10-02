@@ -27,24 +27,46 @@ return dst;
 }
 
 uint8_t * my_memcpy(uint8_t * src, uint8_t *dst, size_t length){
-
-return 0;
+	print_memory(src,length);
+	for(i=0;i<length;i++)
+	{
+		 *(dst+i)=*(src+i);
+	}
+return dst;
 }
 
-int8_t *  my_memset(uint8_t  *  src,  size_t  length,  uint8_t  value){
-
-return 0;
+uint8_t *  my_memset(uint8_t  *  src,  size_t  length,  uint8_t  value){
+	
+	for(i=0;i<length;i++)
+	{
+		 *(src+i)=value;
+	}
+return src;
 }
 
 uint8_t *  my_memzero(uint8_t  *  src,  size_t  length){
-
-return 0;
+	for(i=0;i<length;i++)
+	{
+		 *(src+i)=value;
+	}
+return src;
 }
 
 
 uint8_t *  my_reverse(uint8_t  *  src,  size_t  length){
 	
-return 0;
+	for(i=0;i<length;i++)
+	{
+		 *(mem_buffer+i)=*(src+i);
+	}
+	for(i=0;i<length/2;i++)
+	{
+		*(src+i)=*(mem_buffer+length-i);
+	}
+	print_memory(dst,length);
+	
+return src;
+
 }
 
 
