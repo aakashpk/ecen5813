@@ -30,7 +30,7 @@ uint8_t * my_memcpy(uint8_t * src, uint8_t *dst, size_t length);
 @param length of bytes to be copied
 @return byte pointer to destination
 */
-int8_t *  my_memset(uint8_t  *  src,  size_t  length,  uint8_t  value);
+uint8_t *  my_memset(uint8_t  *  src,  size_t  length,  uint8_t  value);
 /*
 @brief function to set all locations of memory block to a given value
 @param *src byte pointer to source location
@@ -49,7 +49,7 @@ uint8_t *  my_memzero(uint8_t  *  src,  size_t  length);
 
 uint8_t *  my_reverse(uint8_t  *  src,  size_t  length);
 /*
-@brief function to set all locations of memory block to zero 
+@brief function to set reverse the order of all bytes
 @param *src byte pointer to source location
 @param length of memory block to be set
 @return byte pointer to source
