@@ -1,9 +1,12 @@
 CC=gcc
 CSTD=c99
 CFLAGS=-Wall\
-	-std=$(CSTD)
-CPPFLAGS=""
-LDFLAGS=""
+	-std=$(CSTD)\
+	-Werror\
+	-g\
+	-O0
+CPPFLAGS=-E
+LDFLAGS=
 PLATFORM=HOST
 INCLUDES=../include/common
 SOURCES=main.c\
@@ -11,11 +14,7 @@ SOURCES=main.c\
 	memory.c\
 	conversion.c
 	
-OBJECTS:=$(SOURCES:.c=.o)
-
-.PHONY:build
-.PHONY:clean
-.PHONY:compile-all
+.PHONY:build clean compile-all
 
 DEBUGSWITCH=VERBOSE
 TOREMOVE=*.o\
@@ -32,27 +31,45 @@ else
 ifeq ($(PLATFORM),KL25Z)
 CC = arm-none-eabi-gcc
 DEBUGSWITCH = NONE
+INCLUDES+=-I ../include/CMSIS\
+	-I ../include/kl25z
+LDFLAGS=-T ../platform/MKL25Z128xxx4_flash.ld\
+	-march=armv6-m\
+	-mthumb -mcpu=cortex-m0\
+	-mfpu=fpv4-sp-d16\
+	--specs=nosys.specs
+SOURCES+=system_MKL25Z4.c\
+	startup_MKL25Z4.s
 endif
 endif
-	
+
+TARGET=project1.elf
+
+OBJECTS:=$(SOURCES:.c=.o)
+
 build:$(OBJECTS)
-	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) -o project1.elf
-	./project1.elf
+	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS) -o $(TARGET) -Xlinker -Map=project1.map
+	@echo "\n******Built" $(OBJECTS) $(TARGET)
+	size $(TARGET)
+#./project1.elf
 
 compile-all:$(OBJECTS)
 	
 %.d : %.c
-	$(CC) -MM $< -MF $@ -I$(INCLUDES) $(CFLAGS) 
+	$(CC) -MM $< -MF $@ -I$(INCLUDES) $(CFLAGS) $(CPPFLAGS) -D$(DEBUGSWITCH) $(LDFLAGS)
 
 %.i : %.c
-	$(CC) -E $< -o $@ -I$(INCLUDES) $(CFLAGS)	
+	$(CC) $(CPPFLAGS) $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS) -D$(DEBUGSWITCH)
 	
 %.asm : %.c
-	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS)	
+	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS) -D$(DEBUGSWITCH)
 
+%.o : %.s
+	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS)
+	
 %.o : %.c
 #	$(CC) -MM $< -MF $*.d -I $(INCLUDES) $(CFLAGS)
-	$(CC) -c $< -o $@ -I$(INCLUDES) $(CFLAGS) -D$(DEBUGSWITCH) 
-	
+	$(CC) -c $< -o $@ -I$(INCLUDES) $(CFLAGS) -D$(DEBUGSWITCH) $(LDFLAGS) $(CPPFLAGS)
+	size $@
 clean:
 	rm -f $(TOREMOVE)
