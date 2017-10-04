@@ -6,33 +6,53 @@ CPPFLAGS=""
 LDFLAGS=""
 PLATFORM=HOST
 INCLUDES=../include/common
-SOURCES=main.o\
-	debug.o\
-	memory.o\
-#	conversion.o
+SOURCES=main.c\
+	debug.c\
+	memory.c\
+	conversion.c
+	
+OBJECTS:=$(SOURCES:.c=.o)
+
+.PHONY:build
+.PHONY:clean
+.PHONY:compile-all
+
 DEBUGSWITCH=VERBOSE
 TOREMOVE=*.o\
+	*.out\
+	*.map\
+	*.asm\
+	*.i\
+	*.d\
 	*.elf
 
-
-build:$(SOURCES)
-	$(CC) $(SOURCES) -I$(INCLUDES) $(CFLAGS) -o Project1.elf
-	\./Project1.elf
-
-compile-all:$(SOURCES)
-	$(CC) -c sources.c -I$(INCLUDES)
-
-main.o : main.c
-	$(CC) -c main.c -I $(INCLUDES) $(CFLAGS) -D$(DEBUGSWITCH) 
+ifeq ($(PLATFORM),BBB)
+CC = arm-linux-gnueabihf-gcc
+else
+ifeq ($(PLATFORM),KL25Z)
+CC = arm-none-eabi-gcc
+DEBUGSWITCH = NONE
+endif
+endif
 	
-debug.o : debug.c
-	$(CC) -c debug.c -I $(INCLUDES) $(CFLAGS) -D$(DEBUGSWITCH)
+build:$(OBJECTS)
+	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) -o project1.elf
+	./project1.elf
 
-memory.o:memory.c
-	$(CC) -c memory.c -I $(INCLUDES) $(CFLAGS)
+compile-all:$(OBJECTS)
+	
+%.d : %.c
+	$(CC) -MM $< -MF $@ -I$(INCLUDES) $(CFLAGS) 
 
-conversion.o:conversion.c
-	$(CC) -c conversion.c -I $(INCLUDES) $(CFLAGS)
+%.i : %.c
+	$(CC) -E $< -o $@ -I$(INCLUDES) $(CFLAGS)	
+	
+%.asm : %.c
+	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS)	
 
+%.o : %.c
+#	$(CC) -MM $< -MF $*.d -I $(INCLUDES) $(CFLAGS)
+	$(CC) -c $< -o $@ -I$(INCLUDES) $(CFLAGS) -D$(DEBUGSWITCH) 
+	
 clean:
-	rm $(TOREMOVE)
+	rm -f $(TOREMOVE)
