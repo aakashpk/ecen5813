@@ -1,10 +1,8 @@
 CC=gcc
 CSTD=c99
 CFLAGS=-Wall\
-	-std=$(CSTD)\
-	-Werror\
-	-g\
-	-O0
+	-std=$(CSTD)
+
 CPPFLAGS=-E
 LDFLAGS=
 PLATFORM=HOST
@@ -13,6 +11,8 @@ SOURCES=main.c\
 	debug.c\
 	memory.c\
 	conversion.c
+
+SIZETOOL=size
 	
 .PHONY:build clean compile-all
 
@@ -27,9 +27,11 @@ TOREMOVE=*.o\
 
 ifeq ($(PLATFORM),BBB)
 CC = arm-linux-gnueabihf-gcc
+SIZETOOL=arm-linux-gnueabihf-size
 else
 ifeq ($(PLATFORM),KL25Z)
 CC = arm-none-eabi-gcc
+SIZETOOL=arm-none-eabi-size
 DEBUGSWITCH = NONE
 INCLUDES+=-I ../include/CMSIS\
 	-I ../include/kl25z
@@ -48,9 +50,9 @@ TARGET=project1.elf
 OBJECTS:=$(SOURCES:.c=.o)
 
 build:$(OBJECTS)
-	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS) -o $(TARGET) -Xlinker -Map=project1.map
-	@echo "\n******Built" $(OBJECTS) $(TARGET)
-	size $(TARGET)
+	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -o $(TARGET) -Xlinker -Map=project1.map
+	@echo "\n******Built" $(TARGET)"******"
+	$(SIZETOOL) $(OBJECTS) $(TARGET)
 #./project1.elf
 
 compile-all:$(OBJECTS)
@@ -59,17 +61,17 @@ compile-all:$(OBJECTS)
 	$(CC) -MM $< -MF $@ -I$(INCLUDES) $(CFLAGS) $(CPPFLAGS) -D$(DEBUGSWITCH) $(LDFLAGS)
 
 %.i : %.c
-	$(CC) $(CPPFLAGS) $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS) -D$(DEBUGSWITCH)
+	$(CC) $(CPPFLAGS) $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -D$(DEBUGSWITCH)
 	
 %.asm : %.c
-	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS) -D$(DEBUGSWITCH)
+	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -D$(DEBUGSWITCH)
 
 %.o : %.s
-	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS)
+	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS)
 	
 %.o : %.c
 #	$(CC) -MM $< -MF $*.d -I $(INCLUDES) $(CFLAGS)
-	$(CC) -c $< -o $@ -I$(INCLUDES) $(CFLAGS) -D$(DEBUGSWITCH) $(LDFLAGS) $(CPPFLAGS)
-	size $@
+	$(CC) -c $< -o $@ -I$(INCLUDES) $(CFLAGS) -D$(DEBUGSWITCH) $(LDFLAGS)
+	@echo "\n******Built" $@"******"
 clean:
 	rm -f $(TOREMOVE)
