@@ -5,11 +5,24 @@
 #include "debug.h"
 #include "memory.h"
 #include "conversion.h"
+#include "project1.h"
+#include "platform.h"
+
+
 
 int main()
 {
 
+#ifdef PROJECT1
+		
+	project1();
+	
+#endif	
+
 //uint8_t a[]="-2FD";
+#ifndef PROJECT1
+
+printf("\nNo Project 1 Compile Time Switch, if you need it run \nmake clean \nand use \nPS=-DPROJECT1\n");
 
 uint8_t *b=malloc(10),c;
 //int32_t d;
@@ -39,5 +52,7 @@ for(i=0;i<2;i++)
 }
 */
 //print_memory(e,2);
+
+#endif
 return 0;
 }

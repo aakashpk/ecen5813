@@ -66,7 +66,7 @@ int32_t *  reserve_words(size_t  length);
 @return byte pointer to allocation if sucessful, NULL if failure
 */
 
-void free_words(int32_t  *  src);
+void free_words(uint32_t  *  src);
 /*
 @brief frees a memory block allocation when pointer to the memory is provided
 @param *src pointer to memory block

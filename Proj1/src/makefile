@@ -1,22 +1,23 @@
 CC=gcc
 CSTD=c99
 CFLAGS=-Wall\
-	-std=$(CSTD)
+	-std=$(CSTD)\
+	-g\
+	-O0
 
+include sources.mk
+	
 CPPFLAGS=-E
 LDFLAGS=
 PLATFORM=HOST
-INCLUDES=../include/common
-SOURCES=main.c\
-	debug.c\
-	memory.c\
-	conversion.c
 
 SIZETOOL=size
 	
 .PHONY:build clean compile-all
 
-DEBUGSWITCH=VERBOSE
+DS=VERBOSE
+PS=
+
 TOREMOVE=*.o\
 	*.out\
 	*.map\
@@ -29,10 +30,11 @@ ifeq ($(PLATFORM),BBB)
 CC = arm-linux-gnueabihf-gcc
 SIZETOOL=arm-linux-gnueabihf-size
 else
+
 ifeq ($(PLATFORM),KL25Z)
 CC = arm-none-eabi-gcc
 SIZETOOL=arm-none-eabi-size
-DEBUGSWITCH = NONE
+DS=KL25Z
 INCLUDES+=-I ../include/CMSIS\
 	-I ../include/kl25z
 LDFLAGS=-T ../platform/MKL25Z128xxx4_flash.ld\
@@ -50,28 +52,26 @@ TARGET=project1.elf
 OBJECTS:=$(SOURCES:.c=.o)
 
 build:$(OBJECTS)
-	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -o $(TARGET) -Xlinker -Map=project1.map
-	@echo "\n******Built" $(TARGET)"******"
+	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -o $(TARGET) -D$(DS) $(PS) -Xlinker -Map=project1.map
+	@echo "\n******Built" $(TARGET)"******\n"
 	$(SIZETOOL) $(OBJECTS) $(TARGET)
-#./project1.elf
+#	./project1.elf
 
 compile-all:$(OBJECTS)
 	
 %.d : %.c
-	$(CC) -MM $< -MF $@ -I$(INCLUDES) $(CFLAGS) $(CPPFLAGS) -D$(DEBUGSWITCH) $(LDFLAGS)
+	$(CC) -MM $< -MF $@ -I$(INCLUDES) $(CFLAGS) $(CPPFLAGS) -D$(DS) $(LDFLAGS) $(PS)
 
 %.i : %.c
-	$(CC) $(CPPFLAGS) $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -D$(DEBUGSWITCH)
+	$(CC) $(CPPFLAGS) $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -D$(DS) $(PS)
 	
 %.asm : %.c
-	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -D$(DEBUGSWITCH)
+	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -D$(DS) $(PS)
 
-%.o : %.s
-	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS)
-	
 %.o : %.c
-#	$(CC) -MM $< -MF $*.d -I $(INCLUDES) $(CFLAGS)
-	$(CC) -c $< -o $@ -I$(INCLUDES) $(CFLAGS) -D$(DEBUGSWITCH) $(LDFLAGS)
+#	$(CC) -MM $< -MF $*.d -I $(INCLUDES) $(CFLAGS) $(PS)
+	$(CC) -c $< -o $@ -I$(INCLUDES) $(CFLAGS) -D$(DS) $(LDFLAGS) $(PS)
 	@echo "\n******Built" $@"******"
+
 clean:
 	rm -f $(TOREMOVE)
