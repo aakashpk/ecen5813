@@ -11,7 +11,7 @@ int i=0;// index used in for loops
 
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length){
 	 
-	mem_buffer=reserve_words(length); // setup a seperate buffer variable to prevent copy over
+	mem_buffer= (uint8_t*)reserve_words(length); // setup a seperate buffer variable to prevent copy over
 	 
 	 // copy the source location into the buffer
 	for(i=0;i<length;i++)

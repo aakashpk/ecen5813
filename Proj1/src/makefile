@@ -3,6 +3,7 @@ CSTD=c99
 CFLAGS=-Wall\
 	-std=$(CSTD)\
 	-g\
+	-Werror\
 	-O0
 
 include sources.mk
