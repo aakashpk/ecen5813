@@ -13,7 +13,7 @@
 	
 }*/	
 
-#define printf //
+#define printf\( //
 
 #endif
 
