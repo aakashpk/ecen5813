@@ -59,14 +59,19 @@ int8_t big_to_little32(uint32_t * data,uint32_t length)
 	uint32_t temp=0,temp2;
 	for(j=0;j<length;j++){
 		temp=*(data+j);
-		temp2 = (((temp>>24)&0xFF) | ((temp<<8)&0x00FF0000) | ((temp>>8)&0x0000FF00) | ((temp<<24)&0xFF000000));
+		//equivalent of 32 bit word --- byte4 byte3 byte2 byte1
+		temp2 = (((temp>>24)&0x000000FF) // move byte 4 to byte 1 and mask all other bits
+		| ((temp<<8)&0x00FF0000) //move byte2 to byte 3 and mask, same as above
+		| ((temp>>8)&0x0000FF00) //move byte2 to byte 3
+		| ((temp<<24)&0xFF000000)); //move byte1 to byte 4 , bitwise OR of the moved and masked gives changed number
 		*(data+j)=temp2;
 	}
 	return 0;
 }	
 
 int8_t little_to_big32(uint32_t * data,uint32_t length)
-{
+{	
+	// uses same logic as above function
 	int j=0;
 	uint32_t temp=0,temp2;
 	for(j=0;j<length;j++){

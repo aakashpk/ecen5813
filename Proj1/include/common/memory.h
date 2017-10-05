@@ -12,6 +12,7 @@
 #include<stdlib.h>
 #define TWO 2
 #define ONE 1
+#define ZERO 0
 
 uint8_t * mem_buffer;
 uint8_t temp;

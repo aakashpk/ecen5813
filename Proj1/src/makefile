@@ -24,6 +24,7 @@ TOREMOVE=*.o\
 	*.asm\
 	*.i\
 	*.d\
+	*.dep\
 	*.elf
 
 ifeq ($(PLATFORM),BBB)
@@ -53,7 +54,7 @@ OBJECTS:=$(SOURCES:.c=.o)
 
 build:$(OBJECTS)
 	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -o $(TARGET) -D$(DS) $(PS) -Xlinker -Map=project1.map
-	@echo "\n******Built" $(TARGET)"******\n"
+#	@echo "\n******Built" $(TARGET)"******\n"
 	$(SIZETOOL) $(OBJECTS) $(TARGET)
 #	./project1.elf
 
@@ -69,9 +70,9 @@ compile-all:$(OBJECTS)
 	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -D$(DS) $(PS)
 
 %.o : %.c
-#	$(CC) -MM $< -MF $*.d -I $(INCLUDES) $(CFLAGS) $(PS)
+	$(CC) -MM $< -MF $*.dep -I $(INCLUDES) $(CFLAGS) $(PS)
 	$(CC) -c $< -o $@ -I$(INCLUDES) $(CFLAGS) -D$(DS) $(LDFLAGS) $(PS)
-	@echo "\n******Built" $@"******"
+#	@echo "\n******Built" $@"******"
 
 clean:
 	rm -f $(TOREMOVE)

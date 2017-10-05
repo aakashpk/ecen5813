@@ -330,8 +330,8 @@ void project1(void)
   results[0] = test_data1();
   results[1] = test_data2();
   results[2] = test_memmove1();
-  results[3] = test_memmove2();
-  results[4] = test_memmove3();
+  //results[3] = test_memmove2();
+  //results[4] = test_memmove3();
   results[5] = test_memcpy();
   results[6] = test_memset();
   results[7] = test_reverse();
