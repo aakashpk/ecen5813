@@ -14,19 +14,19 @@ PLATFORM=HOST
 
 SIZETOOL=size
 	
-.PHONY:build clean compile-all
+.PHONY:build clean compile-all upload
 
 DS=VERBOSE
 PS=
 
-TOREMOVE=*.o\
-	*.out\
-	*.map\
+TOREMOVE=$(OFILEPATH)*.o\
+	bin/*.out\
+	$(DEPFILES)*.map\
 	*.asm\
 	*.i\
-	*.d\
-	*.dep\
-	*.elf
+	$(DEPFILES)*.d\
+	$(DEPFILES)*.dep\
+	bin/*.elf
 
 ifeq ($(PLATFORM),BBB)
 CC = arm-linux-gnueabihf-gcc
@@ -49,15 +49,24 @@ SOURCES+=system_MKL25Z4.c\
 endif
 endif
 
-TARGET=project1.elf
+TARGET=bin/project1.elf
+UPL_TARGET=project1_demo.elf
 
-OBJECTS:=$(SOURCES:.c=.o)
+OFILEPATH=obj/
+DEPFILES=dependencies/
+OBJECTS:=$(addprefix $(OFILEPATH),$(SOURCES:.c=.o))
+
+upload:$(OBJECTS)
+	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -o $(UPL_TARGET) -D$(DS) $(PS) -Xlinker -Map=$(DEPFILES)project1.map
+#	@echo "\n******Built" $(TARGET)"******\n"
+	$(SIZETOOL) $(OBJECTS) $(UPL_TARGET)
+	scp $(UPL_TARGET) root@192.168.7.2:/home/code/$(UPL_TARGET)
 
 build:$(OBJECTS)
-	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -o $(TARGET) -D$(DS) $(PS) -Xlinker -Map=project1.map
+	$(CC) $(OBJECTS) -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -o $(TARGET) -D$(DS) $(PS) -Xlinker -Map=$(DEPFILES)project1.map
 #	@echo "\n******Built" $(TARGET)"******\n"
 	$(SIZETOOL) $(OBJECTS) $(TARGET)
-#	./project1.elf
+	./$(TARGET)
 
 compile-all:$(OBJECTS)
 	
@@ -70,8 +79,8 @@ compile-all:$(OBJECTS)
 %.asm : %.c
 	$(CC) -S $< -o $@ -I$(INCLUDES) $(CFLAGS) $(LDFLAGS) -D$(DS) $(PS)
 
-%.o : %.c
-	$(CC) -MM $< -MF $*.dep -I $(INCLUDES) $(CFLAGS) $(PS)
+$(OFILEPATH)%.o : %.c
+	$(CC) -MM $< -MF $(DEPFILES)$*.dep -I $(INCLUDES) $(CFLAGS) $(PS)
 	$(CC) -c $< -o $@ -I$(INCLUDES) $(CFLAGS) -D$(DS) $(LDFLAGS) $(PS)
 #	@echo "\n******Built" $@"******"
 

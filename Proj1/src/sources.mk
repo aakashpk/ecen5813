@@ -1,5 +1,5 @@
 
-SOURCES=main.c\
+SOURCES= main.c\
 	debug.c\
 	memory.c\
 	conversion.c\
