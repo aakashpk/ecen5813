@@ -41,9 +41,9 @@ INCLUDES+=-I ../include/CMSIS\
 	-I ../include/kl25z
 LDFLAGS=-T ../platform/MKL25Z128xxx4_flash.ld\
 	-march=armv6-m\
-	-mthumb -mcpu=cortex-m0\
+	-mthumb -mcpu=cortex-m0plus\
 	-mfpu=fpv4-sp-d16\
-	--specs=nosys.specs
+	--specs=nano.specs
 SOURCES+=system_MKL25Z4.c\
 	startup_MKL25Z4.s
 OBJECTS+=$(addprefix $(OFILEPATH)/,$(SOURCES:.s=.o))
